@@ -13,4 +13,7 @@ deploy/*
 
 .vs
 
+*.nupkg
+
 /.idea/.idea.TagCloud.Core/.idea/workspace.xml
+/.ionide

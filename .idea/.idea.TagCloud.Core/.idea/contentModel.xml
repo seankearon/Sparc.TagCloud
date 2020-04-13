@@ -17,6 +17,22 @@
     <e p="C:\Users\sean\AppData\Roaming\JetBrains\Rider2020.1\scratches" t="IncludeRecursive" />
     <e p="C:\Users\sean\dev\main\sparc.tagcloud.core" t="IncludeFlat">
       <e p=".git\info\exclude" t="IncludeRecursive" />
+      <e p="build" t="IncludeRecursive">
+        <e p=".editorconfig" t="Include" />
+        <e p="AppBuild.cs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Build.csproj" t="IncludeRecursive" />
+        <e p="Build.csproj.DotSettings" t="Include" />
+        <e p="Extensions.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp3.0" t="Include">
+              <e p="Build.AssemblyInfo.cs" t="Include" />
+              <e p="RefitStubs.g.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
       <e p="Examples\ConsoleExample" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="ConsoleExample.csproj" t="IncludeRecursive" />
@@ -145,11 +161,13 @@
         </e>
         <e p="Resources.Designer.cs" t="Include" />
         <e p="Resources.resx" t="Include" />
+        <e p="Sparc.TagCloud.Core.nuspec" t="Include" />
         <e p="TagCloud.Core.csproj" t="IncludeRecursive" />
         <e p="TagCloudAnalyzer.cs" t="Include" />
         <e p="TagCloudEx.cs" t="Include" />
         <e p="TagCloudSetting.cs" t="Include" />
         <e p="TagCloudTag.cs" t="Include" />
+        <e p="Ver.TagCloud.Core.txt" t="Include" />
       </e>
       <e p="TagCloud.Core.sln" t="IncludeFlat" />
       <e p="TagCloud.Core.Tests" t="IncludeRecursive">
