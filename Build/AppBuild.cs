@@ -120,7 +120,7 @@ class AppBuild : NukeBuild
         });
 
     Target Push => _ => _
-       .DependsOn(Clean, Pack)
+       //.DependsOn(Clean, Pack)
        .Executes(() =>
         {
             NuGetTasks.NuGetPush(
