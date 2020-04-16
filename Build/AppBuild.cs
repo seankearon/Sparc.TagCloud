@@ -78,6 +78,7 @@ class AppBuild : NukeBuild
         {
             var version = NextVersion;
             TagCloudCoreProject.TagRepository(version);
+            TagCloudCoreProject.SaveAndUpdateVersionFile(NextVersion);
 
             DotNetBuild(
                 s => s
@@ -124,6 +125,5 @@ class AppBuild : NukeBuild
                    .SetApiKey(NugetConfig.ApiKey)
                    .SetSource(NugetConfig.Source)
             );
-            TagCloudCoreProject.SaveAndUpdateVersionFile(NextVersion);
         });
 }
