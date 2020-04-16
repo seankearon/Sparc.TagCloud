@@ -40,7 +40,7 @@ class AppBuild : NukeBuild
         var configuration = builder
            .AddJsonFile("appsettings.json",             true)
            .AddJsonFile("appsettings." + env + ".json", true)
-           .AddEnvironmentVariables()
+           .AddEnvironmentVariables(x => x.Prefix = "SparcTagCloud_")
            .Build();
 
         NugetConfig = new NugetConfig();
