@@ -20,13 +20,14 @@
       <e p="build" t="IncludeRecursive">
         <e p=".editorconfig" t="Include" />
         <e p="AppBuild.cs" t="Include" />
+        <e p="appsettings.json" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="Build.csproj" t="IncludeRecursive" />
         <e p="Build.csproj.DotSettings" t="Include" />
         <e p="Extensions.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
-            <e p="netcoreapp3.0" t="Include">
+            <e p="netcoreapp3.1" t="Include">
               <e p="Build.AssemblyInfo.cs" t="Include" />
               <e p="RefitStubs.g.cs" t="Include" />
             </e>

@@ -1,5 +1,6 @@
 using System;
 using Build;
+using Microsoft.Extensions.Configuration;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.CI.AzurePipelines;
@@ -14,6 +15,12 @@ using Nuke.Common.Tools.NuGet;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
+public class NugetConfig
+{
+    public string ApiKey { get; set; }
+    public string Source { get; set; }
+}
+
 [AzurePipelines(
      AzurePipelinesImage.UbuntuLatest
    // , AzurePipelinesImage.WindowsLatest,
@@ -26,6 +33,22 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 // ReSharper disable once ClassNeverInstantiated.Global
 class AppBuild : NukeBuild
 {
+    public AppBuild()
+    {
+        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        var builder = new ConfigurationBuilder();
+        var configuration = builder
+           .AddJsonFile("appsettings.json",             true)
+           .AddJsonFile("appsettings." + env + ".json", true)
+           .AddEnvironmentVariables()
+           .Build();
+
+        NugetConfig = new NugetConfig();
+        configuration.Bind(NugetConfig);
+    }
+
+    public NugetConfig NugetConfig { get; }
+
     public static int Main () => Execute<AppBuild>(x => x.Pack);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
@@ -93,6 +116,19 @@ class AppBuild : NukeBuild
                    .SetConfiguration(Configuration)
                    .SetVersion(NextVersion.ThreeString())
                    .SetOutputDirectory(PackageOutputDirectory)
+            );
+        });
+
+    Target Push => _ => _
+       .DependsOn(Pack)
+       .Executes(() =>
+        {
+            NuGetTasks.NuGetPush(
+                s => s
+                   .SetTargetPath(NuspecFileName)
+                   .SetWorkingDirectory(PackageOutputDirectory)
+                   .SetApiKey(NugetConfig.ApiKey)
+                   .SetSource(NugetConfig.Source)
             );
             TagCloudCoreProject.SaveAndUpdateVersionFile(NextVersion);
         });
