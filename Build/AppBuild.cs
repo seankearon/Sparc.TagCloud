@@ -26,7 +26,7 @@ public class NugetConfig
    // , AzurePipelinesImage.WindowsLatest,
    //  AzurePipelinesImage.MacOsLatest
    ,
-    InvokedTargets = new[] { nameof(Pack) })]
+    InvokedTargets = new[] { nameof(Push) })]
 [CheckBuildProjectConfigurations]
 [UnsetVisualStudioEnvironmentVariables]
 // ReSharper disable once CheckNamespace
@@ -49,7 +49,7 @@ class AppBuild : NukeBuild
 
     public NugetConfig NugetConfig { get; }
 
-    public static int Main () => Execute<AppBuild>(x => x.Pack);
+    public static int Main () => Execute<AppBuild>(x => x.Push);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
@@ -105,7 +105,7 @@ class AppBuild : NukeBuild
     Target Pack => _ => _
        .Produces(PackageOutputDirectory / "*.nupkg")
        .Requires(() => GitTasks.GitHasCleanWorkingCopy())
-       .DependsOn(Compile, Test)
+       .DependsOn(Test)
        .Executes(() =>
         {
             NuGetTasks.NuGetPack(
@@ -120,7 +120,7 @@ class AppBuild : NukeBuild
         });
 
     Target Push => _ => _
-       .DependsOn(Pack)
+       .DependsOn(Clean, Pack)
        .Executes(() =>
         {
             NuGetTasks.NuGetPush(

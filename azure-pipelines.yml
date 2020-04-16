@@ -21,6 +21,13 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
+      - job: Clean
+        displayName: 'Clean'
+        dependsOn: [  ]
+        steps:
+          - task: CmdLine@2
+            inputs:
+              script: './build.cmd Clean --skip'
       - job: Restore
         displayName: 'Restore'
         dependsOn: [  ]
@@ -44,7 +51,7 @@ stages:
               script: './build.cmd Test --skip'
       - job: Pack
         displayName: 'Pack'
-        dependsOn: [ Compile, Test ]
+        dependsOn: [ Test ]
         steps:
           - task: CmdLine@2
             inputs:
@@ -53,3 +60,10 @@ stages:
             inputs:
               artifactName: output
               pathtoPublish: 'output'
+      - job: Push
+        displayName: 'Push'
+        dependsOn: [ Clean, Pack ]
+        steps:
+          - task: CmdLine@2
+            inputs:
+              script: './build.cmd Push --skip'
