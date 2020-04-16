@@ -13,7 +13,7 @@ namespace Build
 
         public static string VersionFilePath(this Project project)
         {
-            return project.Directory / $"Ver.{project.Name.ToLowerInvariant()}.txt";
+            return project.Directory / "version.txt";
         }
 
         public static string ThreeString(this Version version) => $"{version.Major}.{version.Minor}.{version.Build}";

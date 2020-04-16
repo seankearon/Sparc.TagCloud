@@ -167,7 +167,7 @@
         <e p="TagCloudEx.cs" t="Include" />
         <e p="TagCloudSetting.cs" t="Include" />
         <e p="TagCloudTag.cs" t="Include" />
-        <e p="Ver.TagCloud.Core.txt" t="Include" />
+        <e p="version.txt" t="Include" />
       </e>
       <e p="TagCloud.Core.sln" t="IncludeFlat" />
       <e p="TagCloud.Core.Tests" t="IncludeRecursive">
