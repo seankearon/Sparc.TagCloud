@@ -1,18 +1,29 @@
 using System;
 using Build;
 using Nuke.Common;
+using Nuke.Common.CI;
+using Nuke.Common.CI.AzurePipelines;
 using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.Git;
 using Nuke.Common.Tools.NuGet;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
+[AzurePipelines(
+     AzurePipelinesImage.UbuntuLatest
+   // , AzurePipelinesImage.WindowsLatest,
+   //  AzurePipelinesImage.MacOsLatest
+   ,
+    InvokedTargets = new[] { nameof(Pack) })]
 [CheckBuildProjectConfigurations]
 [UnsetVisualStudioEnvironmentVariables]
+// ReSharper disable once CheckNamespace
+// ReSharper disable once ClassNeverInstantiated.Global
 class AppBuild : NukeBuild
 {
     public static int Main () => Execute<AppBuild>(x => x.Pack);
@@ -35,7 +46,6 @@ class AppBuild : NukeBuild
         .Before(Restore)
         .Executes(() =>
         {
-            //if (!GitTasks.GitHasCleanWorkingCopy()) ControlFlow.Fail("Git does not have a clean working copy.");
             EnsureCleanDirectory(PackageOutputDirectory);
         });
 
@@ -70,6 +80,8 @@ class AppBuild : NukeBuild
         });
 
     Target Pack => _ => _
+       .Produces(PackageOutputDirectory / "*.nupkg")
+       .Requires(() => GitTasks.GitHasCleanWorkingCopy())
        .DependsOn(Compile, Test)
        .Executes(() =>
         {
