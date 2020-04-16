@@ -12,7 +12,6 @@ using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.Git;
 using Nuke.Common.Tools.NuGet;
-using Nuke.Common.Utilities;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
@@ -23,10 +22,7 @@ public class NugetConfig
 }
 
 [AzurePipelines(
-     AzurePipelinesImage.UbuntuLatest
-   // , AzurePipelinesImage.WindowsLatest,
-   //  AzurePipelinesImage.MacOsLatest
-   ,
+     AzurePipelinesImage.UbuntuLatest,
     InvokedTargets = new[] { nameof(Push) })]
 [CheckBuildProjectConfigurations]
 [UnsetVisualStudioEnvironmentVariables]
@@ -38,11 +34,10 @@ class AppBuild : NukeBuild
     {
         var configuration = new ConfigurationBuilder()
                .AddJsonFile("appsettings.json", true)
-               .AddEnvironmentVariables(x => x.Prefix = "SparcTagCloud_")
+                .AddUserSecrets(typeof(AppBuild).Assembly)
                .Build();
 
-        NugetConfig = new NugetConfig();
-        configuration.Bind(NugetConfig);
+        NugetConfig = configuration.GetSection("Nuget").Get<NugetConfig>();
     }
 
     public NugetConfig NugetConfig { get; }
@@ -62,6 +57,7 @@ class AppBuild : NukeBuild
     AbsolutePath TagCloudCoreOutputPath => RootDirectory / "TagCloud.Core" / "bin" / Configuration / "netstandard2.0";
     Version NextVersion => TagCloudCoreProject.GetNextVersion();
     readonly string NuspecFileName = "Sparc.TagCloud.Core.nuspec";
+    AbsolutePath PackageFile =>  PackageOutputDirectory / $"Sparc.TagCloud.Core.{NextVersion.ThreeString()}.nupkg";
 
     Target Clean => _ => _
         .Before(Restore)
@@ -118,12 +114,12 @@ class AppBuild : NukeBuild
         });
 
     Target Push => _ => _
-       //.DependsOn(Clean, Pack)
+       .DependsOn(Clean, Pack)
        .Executes(() =>
         {
             NuGetTasks.NuGetPush(
                 s => s
-                   .SetTargetPath(NuspecFileName)
+                   .SetTargetPath(PackageFile)
                    .SetWorkingDirectory(PackageOutputDirectory)
                    .SetApiKey(NugetConfig.ApiKey)
                    .SetSource(NugetConfig.Source)
