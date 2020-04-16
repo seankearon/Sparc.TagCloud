@@ -12,6 +12,7 @@ using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.Git;
 using Nuke.Common.Tools.NuGet;
+using Nuke.Common.Utilities;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
@@ -35,13 +36,10 @@ class AppBuild : NukeBuild
 {
     public AppBuild()
     {
-        var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        var builder = new ConfigurationBuilder();
-        var configuration = builder
-           .AddJsonFile("appsettings.json",             true)
-           .AddJsonFile("appsettings." + env + ".json", true)
-           .AddEnvironmentVariables(x => x.Prefix = "SparcTagCloud_")
-           .Build();
+        var configuration = new ConfigurationBuilder()
+               .AddJsonFile("appsettings.json", true)
+               .AddEnvironmentVariables(x => x.Prefix = "SparcTagCloud_")
+               .Build();
 
         NugetConfig = new NugetConfig();
         configuration.Bind(NugetConfig);
